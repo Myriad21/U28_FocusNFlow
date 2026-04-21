@@ -1,18 +1,46 @@
-# focusnflow
+# FocusNFlow
 
-A new Flutter project.
+## Overview
+FocusNFlow is a mobile study-planning application designed for college students. It helps users organize academic tasks, generate structured weekly study schedules, and collaborate with peers through real-time study group features.
 
-## Getting Started
+The app uses a rule-based scheduling engine to prioritize tasks based on deadline urgency, estimated effort, and course weight. The generated study plan is transparent, editable, and designed to help students make better academic decisions.
 
-This project is a starting point for a Flutter application.
+## Core Features
+- Task creation, editing, and deletion
+- Rule-based weekly study plan generation
+- Conflict detection and schedule adjustment suggestions
+- Study group creation and collaboration
+- Real-time group chat and shared study sessions
+- Study room availability tracking
+- Push notifications for reminders and updates
 
-A few resources to get you started if this is your first Flutter project:
+## Study-Planning Logic
+The study-planning engine ranks tasks using three core factors:
+- Deadline urgency
+- Estimated effort
+- Course weight
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Tasks are assigned a priority score and then scheduled into available weekly time slots. If conflicts or overloaded periods are detected, the system generates adjustment suggestions. Users can edit recommendations to maintain control over their schedules.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# U28_FocusNFlow
+## Tech Stack
+- Frontend: Flutter (Dart)
+- Backend / Database: Firebase Firestore
+- Authentication: Firebase Authentication
+- File Storage: Firebase Storage
+- Notifications: Firebase Cloud Messaging (FCM)
+
+## Firebase Services Used
+- Firebase Authentication for user sign-in and session management
+- Cloud Firestore for task data, schedules, groups, chat, and room availability
+- Firebase Storage for optional uploaded study resources
+- Firebase Cloud Messaging for reminders and study session notifications
+
+## Team Members
+- Trajuan Smith — Backend / Firebase Lead
+- Raiyan Haque — Frontend / UI Lead
+
+## Project Status
+This project is currently in development for Mobile App Development Project 2.
+
+## Repository Purpose
+This repository contains the source code, documentation, and development progress for FocusNFlow.
