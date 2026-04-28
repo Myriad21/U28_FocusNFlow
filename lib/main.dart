@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/task_stream_test_screen.dart';
+//import 'screens/task_stream_test_screen.dart';
 import 'services/auth_service.dart';
-import 'screens/group_test_screen.dart';
+//import 'screens/group_test_screen.dart';
+import 'screens/room_test_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FocusNFlow',
       debugShowCheckedModeBanner: false,
-      home: GroupTestScreen(),
+      home: RoomTestScreen(),
     );
   }
 }
