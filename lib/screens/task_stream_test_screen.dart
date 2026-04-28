@@ -11,6 +11,22 @@ class TaskStreamTestScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Real-Time Tasks")),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final task = Task(
+              id: '',
+              userId: '',
+              title: 'Test Task',
+              course: 'MAD',
+              deadline: DateTime.now().add(const Duration(days: 2)),
+              estimatedEffort: 3,
+              courseWeight: 5,
+            );
+
+            await _taskService.addTask(task);
+          },
+        child: const Icon(Icons.add),
+      ),
       body: StreamBuilder<List<Task>>(
         stream: _taskService.streamUserTasks(),
         builder: (context, snapshot) {
