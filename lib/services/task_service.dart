@@ -56,4 +56,23 @@ class TaskService {
   Future<void> deleteTask(String taskId) async {
     await _db.collection('tasks').doc(taskId).delete();
   }
+
+  // Streams live task updates for the currently authenticated user
+  Stream<List<Task>> streamUserTasks() {
+    final userId = _authService.currentUserId;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    return _db
+        .collection('tasks')
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Task.fromMap(doc.data(), doc.id))
+          .toList();
+    });
+  }
 }
