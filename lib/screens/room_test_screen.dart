@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/room_model.dart';
 import '../services/room_service.dart';
+import '../services/auth_service.dart';
 
 class RoomTestScreen extends StatelessWidget {
   final RoomService _roomService = RoomService();
+  final AuthService _authService = AuthService();
 
   RoomTestScreen({super.key});
 
@@ -39,34 +41,39 @@ class RoomTestScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final room = rooms[index];
 
+              final userId = _authService.currentUserId;
+              final isMember = room.members?.contains(userId) ?? false;
+
               return ListTile(
                 title: Text(room.name),
                 subtitle: Text(
                   'Occupancy: ${room.currentOccupancy} / ${room.capacity}',
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.login),
-                      onPressed: () async {
-                        try {
-                          await _roomService.joinRoom(room.id);
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(e.toString())),
-                          );
-                        }
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.logout),
-                      onPressed: () async {
-                        await _roomService.leaveRoom(room.id);
-                      },
-                    ),
-                  ],
-                ),
+                trailing: isMember
+                    ? IconButton(
+                        icon: const Icon(Icons.logout),
+                        onPressed: () async {
+                          try {
+                            await _roomService.leaveRoom(room.id);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        },
+                      )
+                    : IconButton(
+                        icon: const Icon(Icons.login),
+                        onPressed: () async {
+                          try {
+                            await _roomService.joinRoom(room.id);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        },
+                      ),
               );
             },
           );
