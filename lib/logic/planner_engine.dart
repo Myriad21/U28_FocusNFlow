@@ -1,5 +1,6 @@
 // Trajuan Smith
 import '../models/task_model.dart';
+import '../models/schedule_model.dart';
 
 class PlannerEngine {
 
@@ -57,5 +58,23 @@ class PlannerEngine {
     }
 
     return weeklyPlan;
+  }
+
+  StudySchedule createScheduleFromTasks({required String userId, required List<Task> tasks,}) {
+    final weeklyPlan = generateWeeklyPlan(tasks);
+
+    final Map<String, List<String>> taskIdsByDay = weeklyPlan.map(
+      (day, tasksForDay) => MapEntry(
+        day,
+        tasksForDay.map((task) => task.id).toList(),
+      ),
+    );
+
+    return StudySchedule(
+      id: '',
+      userId: userId,
+      generatedPlan: taskIdsByDay,
+      lastUpdated: DateTime.now(),
+    );
   }
 }
