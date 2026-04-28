@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'services/auth_service.dart';
 //import 'screens/group_test_screen.dart';
 import 'screens/room_test_screen.dart';
+import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
   );
 
   await AuthService().signInAnonymously();
+  await FcmService().initializeFcm();
 
   runApp(const MyApp());
 }
