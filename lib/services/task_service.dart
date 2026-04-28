@@ -1,18 +1,42 @@
 // Trajuan Smith
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task_model.dart';
+import 'auth_service.dart';
 
 // Handles all Firestore operations related to tasks
 class TaskService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final AuthService _authService = AuthService();
 
   // Add Task
   Future<void> addTask(Task task) async {
-    await _db.collection('tasks').add(task.toMap());
+    final userId = _authService.currentUserId;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    final taskWithUser = Task(
+      id: '',
+      userId: userId,
+      title: task.title,
+      course: task.course,
+      deadline: task.deadline,
+      estimatedEffort: task.estimatedEffort,
+      courseWeight: task.courseWeight,
+    );
+
+    await _db.collection('tasks').add(taskWithUser.toMap());
   }
 
   // Get all tasks for a user
-  Future<List<Task>> getUserTasks(String userId) async {
+  Future<List<Task>> getUserTasks() async {
+    final userId = _authService.currentUserId;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
     final snapshot = await _db
         .collection('tasks')
         .where('userId', isEqualTo: userId)
