@@ -29,4 +29,28 @@ class PlannerEngine {
 
     return sortedTasks;
   }
+
+  Map<String, List<Task>> generateWeeklyPlan(List<Task> tasks) {
+    final prioritizedTasks = prioritizeTasks(tasks);
+
+    final Map<String, List<Task>> weeklyPlan = {
+      'Monday': [],
+      'Tuesday': [],
+      'Wednesday': [],
+      'Thursday': [],
+      'Friday': [],
+      'Saturday': [],
+      'Sunday': [],
+    };
+
+    final days = weeklyPlan.keys.toList();
+    int dayIndex = 0;
+
+    for (final task in prioritizedTasks) {
+      weeklyPlan[days[dayIndex]]!.add(task);
+      dayIndex = (dayIndex + 1) % days.length;
+    }
+
+    return weeklyPlan;
+  }
 }
