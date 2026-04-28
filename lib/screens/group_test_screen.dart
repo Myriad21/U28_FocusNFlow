@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../models/group_model.dart';
 import '../services/group_service.dart';
+import 'chat_test_screen.dart';
 
 class GroupTestScreen extends StatelessWidget {
   final GroupService _groupService = GroupService();
@@ -45,6 +46,14 @@ class GroupTestScreen extends StatelessWidget {
               return ListTile(
                 title: Text(group.name),
                 subtitle: Text('Members: ${group.members.length}'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatTestScreen(groupId: group.id),
+                    ),
+                  );
+                },
               );
             },
           );
