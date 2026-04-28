@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/room_model.dart';
+import 'auth_service.dart';
 
 class RoomService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final AuthService _authService = AuthService();
 
   // Streams all study rooms so availability updates in real time
   Stream<List<StudyRoom>> streamRooms() {
@@ -19,11 +21,18 @@ class RoomService {
       'name': 'Library Room ${DateTime.now().millisecondsSinceEpoch}',
       'capacity': 4,
       'currentOccupancy': 0,
+      'members': [],
     });
   }
 
   // Uses a Firestore transaction so multiple users cannot overfill a room
   Future<void> joinRoom(String roomId) async {
+    final userId = _authService.currentUserId;
+
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+
     final roomRef = _db.collection('rooms').doc(roomId);
 
     await _db.runTransaction((transaction) async {
@@ -36,6 +45,11 @@ class RoomService {
       final data = snapshot.data()!;
       final capacity = data['capacity'] ?? 0;
       final currentOccupancy = data['currentOccupancy'] ?? 0;
+      final members = List<String>.from(data['members'] ?? []);
+
+      if (members.contains(userId)) {
+        throw Exception('You already joined this room');
+      }
 
       if (currentOccupancy >= capacity) {
         throw Exception('Room is already full');
@@ -43,12 +57,19 @@ class RoomService {
 
       transaction.update(roomRef, {
         'currentOccupancy': currentOccupancy + 1,
+        'members': FieldValue.arrayUnion([userId]),
       });
     });
   }
 
   // Decreases occupancy safely without going below zero
   Future<void> leaveRoom(String roomId) async {
+    final userId = _authService.currentUserId;
+
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+
     final roomRef = _db.collection('rooms').doc(roomId);
 
     await _db.runTransaction((transaction) async {
@@ -60,13 +81,15 @@ class RoomService {
 
       final data = snapshot.data()!;
       final currentOccupancy = data['currentOccupancy'] ?? 0;
+      final members = List<String>.from(data['members'] ?? []);
 
-      if (currentOccupancy <= 0) {
-        return;
+      if (!members.contains(userId)) {
+        throw Exception('You are not in this room');
       }
 
       transaction.update(roomRef, {
-        'currentOccupancy': currentOccupancy - 1,
+        'currentOccupancy': currentOccupancy > 0 ? currentOccupancy - 1 : 0,
+        'members': FieldValue.arrayRemove([userId]),
       });
     });
   }
