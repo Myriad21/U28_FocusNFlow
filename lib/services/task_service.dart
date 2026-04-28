@@ -1,6 +1,8 @@
+// Trajuan Smith
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task_model.dart';
 
+// Handles all Firestore operations related to tasks
 class TaskService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 

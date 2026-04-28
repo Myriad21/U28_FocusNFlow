@@ -1,3 +1,6 @@
+// Trajuan Smith
+// Represents a single task stored in Firestore
+
 class Task {
   final String id;
   final String userId;

@@ -1,6 +1,10 @@
+// Trajuan Smith
 import '../models/task_model.dart';
 
 class PlannerEngine {
+
+  // Calculates task priority using weighted factors:
+  // deadline urgency (50%), course weight (30%), estimated effort (20)
   double calculatePriorityScore(Task task) {
     final now = DateTime.now();
     final daysUntilDeadline = task.deadline.difference(now).inDays;
@@ -17,6 +21,7 @@ class PlannerEngine {
         (effortFactor * 0.2);
   }
 
+  // Sorts tasks in descending order based on computed priority score
   List<Task> prioritizeTasks(List<Task> tasks) {
     final sortedTasks = [...tasks];
 
