@@ -1,3 +1,4 @@
+// Trajuan Smith
 import 'package:flutter/material.dart';
 import '../models/group_model.dart';
 import '../services/group_service.dart';
