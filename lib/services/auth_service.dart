@@ -31,6 +31,11 @@ class AuthService {
     );
   }
 
+  // Temporarily signs in anonymously TESTING ONLY.
+  Future<UserCredential> signInAnonymously() async {
+    return await _auth.signInAnonymously();
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
