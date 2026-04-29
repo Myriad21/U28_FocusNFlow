@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../logic/planner_engine.dart';
 import '../../models/task_model.dart';
+import '../../services/app_navigation.dart';
 import '../../services/auth_service.dart';
 import '../../services/task_service.dart';
 import '../../widgets/empty_state.dart';
@@ -29,164 +30,166 @@ class DashboardScreen extends StatelessWidget {
             final prioritized = plannerEngine.prioritizeTasks(tasks);
             final topTasks = prioritized.take(3).toList();
 
-            return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
-                    child: _HeroHeader(
-                      taskCount: tasks.length,
-                      onSignOut: () => AuthService().signOut(),
-                    ),
-                  ),
+            return ListView(
+              padding: const EdgeInsets.all(18),
+              children: [
+                _HeroHeader(
+                  taskCount: tasks.length,
+                  onSignOut: () => AuthService().signOut(),
                 ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _MetricCard(
-                            title: 'Total Tasks',
-                            value: '${tasks.length}',
-                            icon: Icons.task_alt,
-                            gradient: const [
-                              Color(0xFF4F46E5),
-                              Color(0xFF7C3AED),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: _MetricCard(
-                            title: 'Priority',
-                            value: '${topTasks.length}',
-                            icon: Icons.bolt,
-                            gradient: const [
-                              Color(0xFF06B6D4),
-                              Color(0xFF0891B2),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
-                    child: SectionCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionTitle(
-                            title: 'High Priority',
-                            subtitle:
-                                'Based on deadline, effort, and course weight',
-                          ),
-                          const SizedBox(height: 12),
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting)
-                            const Center(child: CircularProgressIndicator())
-                          else if (topTasks.isEmpty)
-                            const EmptyState(
-                              icon: Icons.assignment_outlined,
-                              title: 'No tasks yet',
-                              subtitle:
-                                  'Add coursework to generate your study plan.',
-                            )
-                          else
-                            ...topTasks.map((task) {
-                              final score = plannerEngine
-                                  .calculatePriorityScore(task);
 
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF8FAFC),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: const Color(0xFFE0E7FF),
-                                    child: Text(
-                                      score.toStringAsFixed(0),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF4F46E5),
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    task.title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    '${task.course} • Due ${_formatDate(task.deadline)} • ${task.estimatedEffort} hr',
-                                  ),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.delete_outline),
-                                    onPressed: () {
-                                      taskService.deleteTask(task.id);
-                                    },
-                                  ),
-                                ),
-                              );
-                            }),
-                        ],
+                const SizedBox(height: 18),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: _MetricCard(
+                        title: 'Tasks',
+                        value: '${tasks.length}',
+                        icon: Icons.task_alt,
+                        gradient: const [Color(0xFF4F46E5), Color(0xFF7C3AED)],
                       ),
                     ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 110),
-                    child: SectionCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionTitle(
-                            title: 'Quick Actions',
-                            subtitle: 'Jump into your main study workflow',
-                          ),
-                          const SizedBox(height: 14),
-                          _ActionTile(
-                            icon: Icons.add_task,
-                            title: 'Add coursework',
-                            subtitle: 'Create a deadline-based academic task',
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const AddTaskScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _ActionTile(
-                            icon: Icons.calendar_month,
-                            title: 'Generate weekly plan',
-                            subtitle: 'Use the planner tab to build a schedule',
-                            onTap: () {},
-                          ),
-                          _ActionTile(
-                            icon: Icons.groups,
-                            title: 'Coordinate with groups',
-                            subtitle: 'Create chats and shared sessions',
-                            onTap: () {},
-                          ),
-                        ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _MetricCard(
+                        title: 'Priority',
+                        value: '${topTasks.length}',
+                        icon: Icons.bolt,
+                        gradient: const [Color(0xFF06B6D4), Color(0xFF0891B2)],
                       ),
                     ),
+                  ],
+                ),
+
+                const SizedBox(height: 18),
+
+                SectionCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _SectionTitle(
+                        title: 'High Priority Tasks',
+                        subtitle: 'Based on deadline + effort + weight',
+                      ),
+                      const SizedBox(height: 12),
+
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        const Center(child: CircularProgressIndicator())
+                      else if (topTasks.isEmpty)
+                        const EmptyState(
+                          icon: Icons.assignment_outlined,
+                          title: 'No tasks yet',
+                          subtitle: 'Add coursework to get started.',
+                        )
+                      else
+                        ...topTasks.map((task) {
+                          final score = plannerEngine.calculatePriorityScore(
+                            task,
+                          );
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: const Color(0xFFE0E7FF),
+                                child: Text(
+                                  score.toStringAsFixed(0),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF4F46E5),
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                task.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '${task.course} • Due ${_formatDate(task.deadline)} • ${task.estimatedEffort}h',
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () {
+                                  taskService.deleteTask(task.id);
+                                },
+                              ),
+                            ),
+                          );
+                        }),
+                    ],
                   ),
                 ),
+
+                const SizedBox(height: 12),
+
+                SectionCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _SectionTitle(
+                        title: 'Quick Actions',
+                        subtitle: 'Jump into your workflow',
+                      ),
+                      const SizedBox(height: 12),
+
+                      _ActionTile(
+                        icon: Icons.add_task,
+                        title: 'Add coursework',
+                        subtitle: 'Create a deadline-based academic task',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AddTaskScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _ActionTile(
+                        icon: Icons.auto_awesome,
+                        title: 'Generate weekly plan',
+                        subtitle: 'Use smart rules to build your week',
+                        onTap: () {
+                          AppNavigation.goTo(1);
+                        },
+                      ),
+
+                      _ActionTile(
+                        icon: Icons.groups,
+                        title: 'Coordinate with groups',
+                        subtitle: 'Create chats and shared sessions',
+                        onTap: () {
+                          AppNavigation.goTo(2);
+                        },
+                      ),
+
+                      _ActionTile(
+                        icon: Icons.meeting_room,
+                        title: 'Find study rooms',
+                        subtitle: 'Check room availability in real time',
+                        onTap: () {
+                          AppNavigation.goTo(3);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 80),
               ],
             );
           },
         ),
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xFF4F46E5),
         foregroundColor: Colors.white,
@@ -216,17 +219,8 @@ class _HeroHeader extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF4F46E5), Color(0xFF7C3AED), Color(0xFF06B6D4)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF4F46E5).withValues(alpha: 0.25),
-            blurRadius: 26,
-            offset: const Offset(0, 14),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,25 +238,21 @@ class _HeroHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 26),
+          const SizedBox(height: 20),
           const Text(
             'FocusNFlow',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: 30,
               fontWeight: FontWeight.w900,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             taskCount == 0
-                ? 'Build your academic workflow today.'
-                : 'You have $taskCount task(s) in your study queue.',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              height: 1.4,
-            ),
+                ? 'Start organizing your academic life.'
+                : 'You have $taskCount tasks active.',
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),
@@ -286,18 +276,11 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 118,
-      padding: const EdgeInsets.all(16),
+      height: 110,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: gradient),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: gradient.first.withValues(alpha: 0.18),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +291,7 @@ class _MetricCard extends StatelessWidget {
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -332,9 +315,7 @@ class _SectionTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 4),
         Text(subtitle, style: const TextStyle(color: Color(0xFF64748B))),
@@ -358,21 +339,42 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: CircleAvatar(
-          backgroundColor: const Color(0xFFE0F2FE),
-          child: Icon(icon, color: const Color(0xFF0284C7)),
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: const Color(0xFFE0E7FF),
+              child: Icon(icon, color: const Color(0xFF4F46E5)),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(color: Color(0xFF64748B)),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14),
+          ],
+        ),
       ),
     );
   }
