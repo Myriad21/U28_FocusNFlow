@@ -38,13 +38,6 @@ class ProfileScreen extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.16),
-                    blurRadius: 28,
-                    offset: const Offset(0, 14),
-                  ),
-                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     user?.email ?? 'Guest User',
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
@@ -131,14 +124,13 @@ class ProfileScreen extends StatelessWidget {
                     title: 'Firebase Storage disabled',
                     subtitle:
                         'This prevents billing setup while keeping the app stable.',
-                    trailing: OutlinedButton(
-                      onPressed: () => _showStorageNotice(context),
-                      child: const Text('Info'),
-                    ),
+                    actionLabel: 'Info',
+                    onActionPressed: () => _showStorageNotice(context),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: () => AuthService().signOut(),
               icon: const Icon(Icons.logout),
@@ -179,17 +171,21 @@ class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final Widget? trailing;
+  final String? actionLabel;
+  final VoidCallback? onActionPressed;
 
   const _SettingsTile({
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.trailing,
+    this.actionLabel,
+    this.onActionPressed,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasAction = actionLabel != null && onActionPressed != null;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -198,30 +194,43 @@ class _SettingsTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      child: Row(
+      child: Column(
         children: [
-          CircleAvatar(
-            backgroundColor: const Color(0xFFE0E7FF),
-            child: Icon(icon, color: const Color(0xFF4F46E5)),
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: const Color(0xFFE0E7FF),
+                child: Icon(icon, color: const Color(0xFF4F46E5)),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Color(0xFF64748B)),
-                ),
-              ],
+          if (hasAction) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: onActionPressed,
+                child: Text(actionLabel!),
+              ),
             ),
-          ),
-          if (trailing != null) trailing!,
+          ],
         ],
       ),
     );
