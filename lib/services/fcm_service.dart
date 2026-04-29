@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+
 import 'auth_service.dart';
 
 class FcmService {
@@ -7,12 +9,11 @@ class FcmService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
 
-  // Requests notification permission, gets the FCM token, and stores it under the user's Firestore profile
   Future<void> initializeFcm() async {
     final userId = _authService.currentUserId;
 
     if (userId == null) {
-      throw Exception('User not authenticated');
+      return;
     }
 
     await _messaging.requestPermission();
@@ -27,9 +28,11 @@ class FcmService {
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Foreground notification title: ${message.notification?.title}');
-      print('Foreground notification body: ${message.notification?.body}');
-      print('Foreground notification data: ${message.data}');
+      debugPrint(
+        'Foreground notification title: ${message.notification?.title}',
+      );
+      debugPrint('Foreground notification body: ${message.notification?.body}');
+      debugPrint('Foreground notification data: ${message.data}');
     });
   }
 }
