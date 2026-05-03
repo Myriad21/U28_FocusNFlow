@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -58,6 +46,42 @@ class DefaultFirebaseOptions {
     messagingSenderId: '760378827377',
     projectId: 'focusnflow-f2724',
     storageBucket: 'focusnflow-f2724.firebasestorage.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDjx3ukeylJ2W6GnIhAmzUaZCcPZ5juwk0',
+    appId: '1:518881213786:web:822ec676c57a6ca279c763',
+    messagingSenderId: '518881213786',
+    projectId: 'u28-focusnflow',
+    authDomain: 'u28-focusnflow.firebaseapp.com',
+    storageBucket: 'u28-focusnflow.firebasestorage.app',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBqusGREkNdPgSZ8MYpK7cq4vqHtGMvCqg',
+    appId: '1:518881213786:ios:116781875749322879c763',
+    messagingSenderId: '518881213786',
+    projectId: 'u28-focusnflow',
+    storageBucket: 'u28-focusnflow.firebasestorage.app',
+    iosBundleId: 'com.example.focusnflow',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBqusGREkNdPgSZ8MYpK7cq4vqHtGMvCqg',
+    appId: '1:518881213786:ios:116781875749322879c763',
+    messagingSenderId: '518881213786',
+    projectId: 'u28-focusnflow',
+    storageBucket: 'u28-focusnflow.firebasestorage.app',
+    iosBundleId: 'com.example.focusnflow',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDjx3ukeylJ2W6GnIhAmzUaZCcPZ5juwk0',
+    appId: '1:518881213786:web:8a7c8321d1da38e179c763',
+    messagingSenderId: '518881213786',
+    projectId: 'u28-focusnflow',
+    authDomain: 'u28-focusnflow.firebaseapp.com',
+    storageBucket: 'u28-focusnflow.firebasestorage.app',
   );
 
 }

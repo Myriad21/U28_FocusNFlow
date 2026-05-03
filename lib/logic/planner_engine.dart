@@ -25,14 +25,11 @@ class PlannerEngine {
   // Sorts tasks in descending order based on computed priority score
   List<Task> prioritizeTasks(List<Task> tasks) {
     final sortedTasks = [...tasks];
-
     sortedTasks.sort((a, b) {
       final scoreA = calculatePriorityScore(a);
       final scoreB = calculatePriorityScore(b);
-
       return scoreB.compareTo(scoreA);
     });
-
     return sortedTasks;
   }
 

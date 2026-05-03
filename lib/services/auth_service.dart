@@ -1,16 +1,16 @@
-// Trajuan Smith
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Returns the currently signed-in Firebase user, or null if no user is logged in
   User? get currentUser => _auth.currentUser;
 
-  // Returns the current user's UID for Firestore ownership checks
   String? get currentUserId => _auth.currentUser?.uid;
 
-  // Creates a new account using email and password
+  Stream<User?> authStateChanges() {
+    return _auth.authStateChanges();
+  }
+
   Future<UserCredential> signUp({
     required String email,
     required String password,
@@ -31,7 +31,6 @@ class AuthService {
     );
   }
 
-  // Temporarily signs in anonymously TESTING ONLY.
   Future<UserCredential> signInAnonymously() async {
     return await _auth.signInAnonymously();
   }
