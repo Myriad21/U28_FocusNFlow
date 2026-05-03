@@ -14,29 +14,38 @@ class GroupsScreen extends StatelessWidget {
 
     final name = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create Study Group'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Group name',
-            hintText: 'Example: MAD Final Prep',
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Create Study Group'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'Group name',
+              hintText: 'Example: MAD Final Prep',
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Create'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final groupName = controller.text.trim();
+                Navigator.of(dialogContext).pop(groupName);
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
     );
 
-    controller.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.dispose();
+    });
 
     if (name == null || name.isEmpty) return;
 
@@ -91,13 +100,16 @@ class GroupsScreen extends StatelessWidget {
                   title: Text(group.name),
                   subtitle: Text('${group.members.length} member(s)'),
                   trailing: isMember
-                      ? const Icon(Icons.chevron_right)
-                      : FilledButton(
-                          onPressed: () async {
-                            await groupService.joinGroup(group.id);
-                          },
-                          child: const Text('Join'),
-                        ),
+    ? const Icon(Icons.chevron_right)
+    : SizedBox(
+        width: 80,
+        child: FilledButton(
+          onPressed: () async {
+            await groupService.joinGroup(group.id);
+          },
+          child: const Text('Join'),
+        ),
+      ),
                   onTap: isMember
                       ? () {
                           Navigator.push(

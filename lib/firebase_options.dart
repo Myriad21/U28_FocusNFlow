@@ -41,11 +41,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCq3Iwf5Fe5hFHR2UEEkbv2Fm-Kp9caCM0',
-    appId: '1:518881213786:android:f9fedfdf53f17d9a79c763',
-    messagingSenderId: '518881213786',
-    projectId: 'u28-focusnflow',
-    storageBucket: 'u28-focusnflow.firebasestorage.app',
+    apiKey: 'AIzaSyAw-JcJ3tKWnMPTnUosT1SfLj_KiqNkAZI',
+    appId: '1:760378827377:android:f93358ed1a0a1575aeb1d0',
+    messagingSenderId: '760378827377',
+    projectId: 'focusnflow-f2724',
+    storageBucket: 'focusnflow-f2724.firebasestorage.app',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
